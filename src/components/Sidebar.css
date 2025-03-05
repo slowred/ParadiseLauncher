@@ -40,7 +40,7 @@
 .logo-icon {
   width: 40px;
   height: 40px;
-  background: var(--accent-gradient);
+  background: linear-gradient(135deg, #00455e, #002c3a);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -49,6 +49,29 @@
   font-size: 20px;
   color: white;
   box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+  position: relative;
+  overflow: visible;
+}
+
+.logo-icon::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+  opacity: 0.5;
+  filter: blur(8px);
+  animation: pulse 2s infinite alternate;
+  z-index: 0;
+}
+
+.logo-icon::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  animation: rotateRing 10s linear infinite;
 }
 
 .logo-icon svg {
@@ -57,15 +80,64 @@
   position: relative;
   z-index: 2;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  animation: float 3s ease-in-out infinite;
 }
 
-@keyframes logoShine {
+.logo-icon svg path {
+  transition: all 0.3s ease;
+}
+
+.logo-icon:hover svg path {
+  fill: rgba(255, 255, 255, 0.95);
+  filter: brightness(1.2);
+}
+
+.logo-icon:hover::before {
+  opacity: 0.8;
+  filter: blur(15px);
+}
+
+@keyframes pulse {
   0% {
-    transform: translateX(-100%) rotate(45deg);
+    opacity: 0.4;
+    transform: scale(0.95);
   }
   100% {
-    transform: translateX(100%) rotate(45deg);
+    opacity: 0.7;
+    transform: scale(1.05);
   }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes rotateRing {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Анимация частиц вокруг логотипа */
+.logo-icon .particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.sidebar.collapsed .logo-icon::before, 
+.sidebar.collapsed .logo-icon::after {
+  opacity: 1;
+  visibility: visible;
 }
 
 .menu {
