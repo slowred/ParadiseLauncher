@@ -419,4 +419,50 @@
 .sidebar.collapsed .menu-item:hover::after,
 .sidebar.collapsed .collapse-button:hover::after {
   animation: tooltipAppear 0.3s forwards;
+}
+
+/* Исправление отображения элементов статистики */
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px; /* Уменьшаем отступы между элементами */
+  margin-top: 20px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px; /* Уменьшаем внутренние отступы */
+  background: rgba(0, 229, 255, 0.03);
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+  width: 100%; /* Гарантируем, что элемент займет всю доступную ширину */
+  text-align: center; /* Центрируем текст */
+  overflow: hidden; /* Предотвращаем выход контента за пределы */
+}
+
+.stat-value {
+  font-size: 20px; /* Уменьшаем размер шрифта */
+  font-weight: 600;
+  color: var(--primary-color);
+  white-space: nowrap; /* Предотвращаем перенос строк в значении */
+}
+
+.stat-label {
+  font-size: 12px; /* Уменьшаем размер шрифта */
+  color: var(--text-secondary);
+  margin-top: 3px;
+  /* Удаляем white-space: nowrap, чтобы разрешить перенос */
+  word-wrap: break-word; /* Разрешаем перенос длинных слов */
+  overflow-wrap: break-word; /* Для лучшей совместимости */
+  hyphens: auto; /* Добавляем переносы слов */
+  max-width: 100%; /* Ограничиваем по ширине контейнера */
+}
+
+/* Медиа-запрос для узких экранов */
+@media (max-width: 300px) {
+  .about-stats {
+    grid-template-columns: 1fr; /* В одну колонку при очень узком экране */
+  }
 } 
