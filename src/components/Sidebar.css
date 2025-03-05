@@ -1,0 +1,350 @@
+.sidebar {
+  width: 240px;
+  background: var(--bg-darker);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar.collapsed {
+  width: 100px;
+}
+
+.logo {
+  padding: 24px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+}
+
+.sidebar.collapsed .logo {
+  justify-content: center;
+  padding: 24px 0;
+}
+
+.logo-text {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.5px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--accent-gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 20px;
+  color: white;
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.5);
+}
+
+.logo-icon svg {
+  width: 28px;
+  height: 28px;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes logoShine {
+  0% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(45deg);
+  }
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 12px;
+  margin-top: 20px;
+  flex: 1;
+}
+
+.sidebar.collapsed .menu {
+  padding: 0;
+  align-items: center;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+}
+
+.menu-item.active {
+  background: var(--accent-gradient);
+  color: var(--text-color);
+  box-shadow: 0 4px 12px rgba(0, 229, 255, 0.25);
+}
+
+.menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.menu-label {
+  margin-left: 12px;
+  font-weight: 500;
+  position: relative;
+  z-index: 2;
+}
+
+.sidebar.collapsed .menu-item {
+  justify-content: center;
+  padding: 12px 0;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+}
+
+.collapse-button {
+  position: absolute;
+  bottom: 20px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 229, 255, 0.08);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.1);
+}
+
+.collapse-button:hover {
+  background: var(--accent-gradient);
+  color: var(--text-color);
+  box-shadow: 
+    0 0 15px rgba(0, 229, 255, 0.4),
+    0 0 30px rgba(0, 229, 255, 0.2);
+  transform: scale(1.1) rotate(180deg);
+}
+
+.collapse-button:active {
+  transform: scale(0.95);
+}
+
+.collapse-arrow {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.sidebar.collapsed .collapse-arrow {
+  transform: rotate(180deg);
+}
+
+/* Добавляем свечение вокруг кнопки */
+.collapse-button::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  filter: blur(8px);
+}
+
+.collapse-button:hover::after {
+  opacity: 0.6;
+}
+
+/* Анимированный фон для активного пункта меню */
+.menu-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    rgba(0, 229, 255, 0.3) 0%, 
+    rgba(0, 139, 158, 0.3) 100%);
+  z-index: 1;
+  opacity: 0.5;
+}
+
+.menu-item.active::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.15) 0%, transparent 70%);
+  animation: pulseGlow 2s infinite ease-in-out;
+  z-index: 0;
+}
+
+@keyframes pulseGlow {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+}
+
+/* Стили для тултипов - переработанная версия */
+.sidebar.collapsed .menu-item,
+.sidebar.collapsed .collapse-button {
+  position: relative;
+}
+
+.sidebar.collapsed .menu-item:hover::after,
+.sidebar.collapsed .collapse-button:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 60px; /* фиксированное расстояние от левого края */
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--accent-gradient, linear-gradient(45deg, #00e5ff, #008B9E));
+  color: white;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.sidebar.collapsed .menu-item:hover::before,
+.sidebar.collapsed .collapse-button:hover::before {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-right-color: #00e5ff; /* Используем конкретный цвет вместо переменной */
+  z-index: 1001;
+  pointer-events: none;
+}
+
+.sidebar.collapsed .menu-item:hover::after,
+.sidebar.collapsed .menu-item:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Тултип для кнопки сворачивания */
+.sidebar.collapsed .collapse-button {
+  position: relative;
+}
+
+.sidebar.collapsed .collapse-button::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--accent-gradient);
+  color: white;
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-left: 10px;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.sidebar.collapsed .collapse-button::before {
+  content: '';
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: var(--primary-color);
+  margin-left: -2px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: 101;
+}
+
+.sidebar.collapsed .collapse-button:hover::after,
+.sidebar.collapsed .collapse-button:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Анимация для тултипов */
+@keyframes tooltipAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+.sidebar.collapsed .menu-item:hover::after,
+.sidebar.collapsed .collapse-button:hover::after {
+  animation: tooltipAppear 0.3s forwards;
+} 
