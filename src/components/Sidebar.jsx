@@ -10,7 +10,7 @@ export function Sidebar({ activeTab, setActiveTab, onlinePlayers }) {
     { id: 'play', icon: 'play', label: 'Играть' },
     { id: 'shop', icon: 'shop', label: 'Магазин' },
     { id: 'news', icon: 'news', label: 'Новости' },
-    { id: 'forum', icon: 'forum', label: 'Форум' },
+    { id: 'friends', icon: 'forum', label: 'Друзья' },
     { id: 'discord', icon: 'discord', label: 'Discord' },
     { id: 'mods', icon: 'mods', label: 'Моды' },
     { id: 'settings', icon: 'settings', label: 'Настройки' }

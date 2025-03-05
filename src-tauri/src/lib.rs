@@ -1,5 +1,6 @@
 mod settings;
 mod discord;
+mod friends;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -21,6 +22,9 @@ pub fn run() {
             crate::commands::validate_gta_path,
             crate::commands::reset_settings,
             crate::commands::get_discord_messages,
+            crate::commands::get_friends,
+            crate::commands::add_friend,
+            crate::commands::remove_friend,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -36,6 +40,13 @@ mod commands {
         reset_settings as reset_settings_in_registry
     };
     use crate::discord::{DiscordMessage, get_discord_messages as fetch_discord_messages};
+    use crate::friends::{
+        Friend,
+        get_friends as get_friends_list,
+        add_friend as add_new_friend,
+        remove_friend as remove_existing_friend,
+        AddFriendResponse
+    };
 
     #[tauri::command]
     pub async fn minimize_window(window: Window) {
@@ -80,5 +91,31 @@ mod commands {
     #[tauri::command]
     pub async fn get_discord_messages(channel_id: String, bot_token: String) -> Result<Vec<DiscordMessage>, String> {
         fetch_discord_messages(&channel_id, &bot_token).await
+    }
+
+    #[tauri::command]
+    pub async fn get_friends() -> Vec<Friend> {
+        get_friends_list()
+    }
+
+    #[tauri::command]
+    pub async fn add_friend(username: String) -> AddFriendResponse {
+        match add_new_friend(&username) {
+            Ok(friend) => AddFriendResponse {
+                success: true,
+                message: None,
+                friend: Some(friend),
+            },
+            Err(error) => AddFriendResponse {
+                success: false,
+                message: Some(error),
+                friend: None,
+            },
+        }
+    }
+
+    #[tauri::command]
+    pub async fn remove_friend(friend_id: String) -> Result<(), String> {
+        remove_existing_friend(&friend_id)
     }
 }

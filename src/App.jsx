@@ -11,12 +11,40 @@ import { appWindow } from '@tauri-apps/api/window'
 import { PlayTab } from './components/PlayTab'
 import { SplashScreen } from './components/SplashScreen'
 import { DiscordTab } from './components/DiscordTab'
+import { FriendsTab } from './components/FriendsTab'
 
 function App() {
   const [activeTab, setActiveTab] = useState('play')
   const [onlinePlayers] = useState(22302)
   const [loading, setLoading] = useState(true)
   
+  useEffect(() => {
+    const disableContextMenu = (e) => {
+      e.preventDefault();
+      return false;
+    };
+    
+    const disableDevTools = (e) => {
+      if (e.key === 'F12') {
+        e.preventDefault();
+        return false;
+      }
+      
+      if ((e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C'))) {
+        e.preventDefault();
+        return false;
+      }
+    };
+    
+    document.addEventListener('contextmenu', disableContextMenu);
+    document.addEventListener('keydown', disableDevTools);
+    
+    return () => {
+      document.removeEventListener('contextmenu', disableContextMenu);
+      document.removeEventListener('keydown', disableDevTools);
+    };
+  }, []);
+
   const handleMinimize = () => {
     invoke('minimize_window')
   }
@@ -47,6 +75,8 @@ function App() {
         return <NewsTab />
       case 'discord':
         return <DiscordTab />
+      case 'friends':
+        return <FriendsTab />
       default:
         return <div className="development-notice">
           <h2>В разработке</h2>

@@ -9,7 +9,6 @@ export function DiscordTab() {
   
   // Храним ID канала Discord 
   const CHANNEL_ID = "1346658628761026570"; // ID вашего канала
-  // Временное значение для разработки - в продакшене должно быть в .env
   const BOT_TOKEN = "ВАШ_НОВЫЙ_ТОКЕН"; // Замените на ваш новый токен
   
   useEffect(() => {
@@ -17,58 +16,20 @@ export function DiscordTab() {
       try {
         setLoading(true);
         
-        // Для демонстрации и разработки используем моки
-        const mockMessages = [
-          {
-            id: "1",
-            content: "Добро пожаловать в Paradise! Мы рады видеть новых игроков.",
-            author: {
-              id: "123456789",
-              username: "Paradise Admin",
-              global_name: "Paradise Admin",
-              avatar: null
-            },
-            timestamp: new Date().toISOString()
-          },
-          {
-            id: "2",
-            content: "Сегодня у нас обновление сервера! Новые функции и исправления багов.",
-            author: {
-              id: "987654321",
-              username: "Server Bot",
-              global_name: "Paradise Bot",
-              avatar: null
-            },
-            timestamp: new Date(Date.now() - 3600000).toISOString()
-          },
-          {
-            id: "3",
-            content: "Не забудьте присоединиться к нашему Discord серверу для общения с другими игроками!",
-            author: {
-              id: "567891234",
-              username: "Community Manager",
-              global_name: "Paradise Manager",
-              avatar: null
-            },
-            timestamp: new Date(Date.now() - 7200000).toISOString()
-          }
-        ];
-        
         // В разработке используем моки
         setMessages(mockMessages);
         
-        // В продакшене раскомментируйте этот код:
-        // try {
-        //   const discordMessages = await invoke('get_discord_messages', { 
-        //     channelId: CHANNEL_ID, 
-        //     botToken: BOT_TOKEN 
-        //   });
-        //   setMessages(discordMessages);
-        // } catch (apiError) {
-        //   console.error('API ошибка:', apiError);
-        //   setError('Не удалось загрузить сообщения с Discord API. Ошибка: ' + apiError);
-        //   setMessages([]);
-        // }
+        try {
+          const discordMessages = await invoke('get_discord_messages', { 
+            channelId: CHANNEL_ID, 
+            botToken: BOT_TOKEN 
+          });
+          setMessages(discordMessages);
+        } catch (apiError) {
+          console.error('API ошибка:', apiError);
+          setError('Не удалось загрузить сообщения с Discord API. Ошибка: ' + apiError);
+          setMessages([]);
+        }
         
         setError(null);
       } catch (err) {
