@@ -231,6 +231,11 @@
   text-decoration: none;
   transition: all 0.3s ease;
   position: relative;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: inherit;
 }
 
 .contact-link .link-arrow {

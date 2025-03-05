@@ -24,6 +24,10 @@
         "all": false,
         "close": true,
         "minimize": true
+      },
+      "shell": {
+        "open": true,
+        "all": false
       }
     },
     "bundle": {

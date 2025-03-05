@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api';
 import { open } from '@tauri-apps/api/dialog';
+import { open as openUrl } from '@tauri-apps/api/shell';
 import { Notification } from './Notification';
 import './SettingsTab.css';
 
@@ -92,6 +93,18 @@ export function SettingsTab() {
       console.error('Failed to reset settings:', err);
       setNotification({
         message: 'Ошибка при сбросе настроек',
+        type: 'error'
+      });
+    }
+  };
+  
+  const openLink = async (url) => {
+    try {
+      await openUrl(url);
+    } catch (err) {
+      console.error('Ошибка при открытии ссылки:', err);
+      setNotification({
+        message: 'Не удалось открыть ссылку',
         type: 'error'
       });
     }
@@ -300,36 +313,30 @@ export function SettingsTab() {
         <div className="settings-group contact-group">
           <h3>Контакты</h3>
           <div className="contact-links">
-            <a 
-              href="https://discord.gg/paradisegta5" 
+            <button 
               className="contact-link discord"
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => openLink('https://discord.gg/paradisegta5')}
             >
               <i className="discord-icon"></i>
               Discord
               <span className="link-arrow">→</span>
-            </a>
-            <a 
-              href="https://t.me/paradise_gta5rp" 
+            </button>
+            <button 
               className="contact-link telegram"
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => openLink('https://t.me/paradise_gta5rp')}
             >
               <i className="telegram-icon"></i>
               Telegram
               <span className="link-arrow">→</span>
-            </a>
-            <a 
-              href="https://vk.com/paradise_gta5rp" 
+            </button>
+            <button 
               className="contact-link vk"
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => openLink('https://vk.com/paradise_gta5rp')}
             >
               <i className="vk-icon"></i>
               VK
               <span className="link-arrow">→</span>
-            </a>
+            </button>
           </div>
         </div>
       </div>
