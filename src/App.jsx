@@ -10,6 +10,7 @@ import { Sidebar } from './components/Sidebar'
 import { appWindow } from '@tauri-apps/api/window'
 import { PlayTab } from './components/PlayTab'
 import { SplashScreen } from './components/SplashScreen'
+import { DiscordTab } from './components/DiscordTab'
 
 function App() {
   const [activeTab, setActiveTab] = useState('play')
@@ -44,6 +45,8 @@ function App() {
         return <SettingsTab />
       case 'news':
         return <NewsTab />
+      case 'discord':
+        return <DiscordTab />
       default:
         return <div className="development-notice">
           <h2>В разработке</h2>

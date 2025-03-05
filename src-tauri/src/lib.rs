@@ -1,4 +1,5 @@
 mod settings;
+mod discord;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -19,6 +20,7 @@ pub fn run() {
             crate::commands::load_settings,
             crate::commands::validate_gta_path,
             crate::commands::reset_settings,
+            crate::commands::get_discord_messages,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -33,6 +35,7 @@ mod commands {
         validate_gta_path as validate_path,
         reset_settings as reset_settings_in_registry
     };
+    use crate::discord::{DiscordMessage, get_discord_messages as fetch_discord_messages};
 
     #[tauri::command]
     pub async fn minimize_window(window: Window) {
@@ -72,5 +75,10 @@ mod commands {
     #[tauri::command]
     pub async fn reset_settings() -> Result<(), String> {
         reset_settings_in_registry().map_err(|e| e.to_string())
+    }
+
+    #[tauri::command]
+    pub async fn get_discord_messages(channel_id: String, bot_token: String) -> Result<Vec<DiscordMessage>, String> {
+        fetch_discord_messages(&channel_id, &bot_token).await
     }
 }
