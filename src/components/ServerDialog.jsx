@@ -47,16 +47,16 @@ export function ServerDialog({ server, onClose }) {
               Добро пожаловать на сервер {server.name}! 
               Здесь вы найдете увлекательный геймплей и дружное комьюнити.
             </p>
-            
-            <div className="server-stats">
-              <div className="stat">
-                <span className="stat-label">Игроков онлайн</span>
-                <span className="stat-value">{server.players || '1,234'}</span>
-              </div>
-              <div className="stat">
-                <span className="stat-label">Рейтинг</span>
-                <span className="stat-value">{server.rating || '4.8'} <span className="custom-star">★</span></span>
-              </div>
+          </div>
+
+          <div className="server-stats">
+            <div className="stat">
+              <span className="stat-label">Игроков онлайн</span>
+              <span className="stat-value">{server.players || '1245'}</span>
+            </div>
+            <div className="stat">
+              <span className="stat-label">Рейтинг</span>
+              <span className="stat-value">{server.rating || '4.9'} <span className="custom-star">★</span></span>
             </div>
           </div>
 

@@ -23,6 +23,12 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   animation: serverAppear 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   animation-fill-mode: both;
+  transform-style: preserve-3d;
+  transform: perspective(1000px) rotateX(0) rotateY(0) translateZ(0);
+  will-change: transform;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
 }
 
 .server-card:nth-child(2) { animation-delay: 0.1s; }
@@ -71,6 +77,8 @@
   color: var(--primary-color);
   margin-bottom: 12px;
   font-weight: 600;
+  transform: translateZ(20px);
+  position: relative;
 }
 
 .server-info h3 {
@@ -80,12 +88,15 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 700;
+  transform: translateZ(20px);
+  position: relative;
 }
 
 .server-details {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  transform: translateZ(20px);
 }
 
 .server-status {
@@ -96,6 +107,7 @@
   color: #4CAF50;
   position: relative;
   padding-left: 16px;
+  transform: translateZ(20px);
 }
 
 .server-status::before {
@@ -118,6 +130,8 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  transform: translateZ(20px);
+  position: relative;
 }
 
 .player-icon {
@@ -131,6 +145,8 @@
 
 .server-progress {
   margin-bottom: 24px;
+  transform: translateZ(20px);
+  position: relative;
 }
 
 .progress-bar {
@@ -161,6 +177,8 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  transform: translateZ(20px);
+  margin-top: auto;
 }
 
 .play-button::before {
@@ -397,4 +415,163 @@
   20%, 100% {
     left: 100%;
   }
+}
+
+/* Добавляем эффект глубины тени при 3D-повороте */
+.server-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: transparent;
+  box-shadow: 0 30px 40px rgba(0, 0, 0, 0.3);
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+.server-card:hover::after {
+  opacity: 0.8;
+}
+
+.server-card:hover .play-button {
+  transform: translateZ(30px); /* Кнопка "всплывает" сильнее при наведении */
+}
+
+/* Стили для описания сервера */
+.server-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  line-height: 1.4;
+  opacity: 0.8;
+  transition: opacity 0.3s;
+  height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.server-card:hover .server-description {
+  opacity: 1;
+}
+
+/* Стили для категорий серверов */
+.server-categories {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.category-button {
+  background: rgba(0, 229, 255, 0.05);
+  border: 1px solid rgba(0, 229, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
+}
+
+.category-button:hover {
+  background: rgba(0, 229, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.category-button.active {
+  background: var(--accent-gradient);
+  color: white;
+  box-shadow: 0 5px 15px rgba(0, 229, 255, 0.2);
+}
+
+.server-info {
+  flex-grow: 1;
+}
+
+/* Стили для плашек статистики */
+.server-stats {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.server-card .stat {
+  background: rgba(0, 194, 255, 0.05);
+  padding: 10px;
+  border-radius: 10px;
+  flex: 1;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 194, 255, 0.08);
+  transform: translateZ(25px); /* Делаем плашки "всплывающими" при 3D-эффекте */
+}
+
+.server-card .stat:hover {
+  background: rgba(0, 194, 255, 0.12);
+  transform: translateZ(35px) translateY(-2px);
+  border-color: rgba(0, 194, 255, 0.2);
+}
+
+.server-card .stat-label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.server-card .stat-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.player-icon-stat {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="%2300E5FF"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.custom-star {
+  color: var(--primary-color);
+  font-size: 16px;
+  text-shadow: 0 0 8px rgba(0, 194, 255, 0.5);
+  display: inline-block;
+  animation: starPulse 3s infinite ease-in-out;
+  position: relative;
+  top: -1px;
+}
+
+@keyframes starPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Обновленные стили для деталей сервера */
+.server-load {
+  font-size: 14px;
+  color: var(--text-secondary);
 } 
