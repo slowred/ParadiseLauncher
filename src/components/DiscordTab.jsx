@@ -62,7 +62,7 @@ export function DiscordTab() {
   return (
     <div className="discord-tab">
       <div className="discord-header">
-        <h2 className="discord-title">
+        <div className="discord-title">
           <svg className="discordTab-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g id="Icons">
               <g>
@@ -72,9 +72,11 @@ export function DiscordTab() {
               </g>
             </g>
           </svg>
-          Discord сообщения
-          <div className="discord-subtitle">Последние обновления сервера</div>
-        </h2>
+          <div>
+            <h2>Discord сообщения</h2>
+            <div className="discord-subtitle">Последние обновления сервера</div>
+          </div>
+        </div>
       </div>
       
       <div className="discord-messages-container">

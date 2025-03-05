@@ -47,4 +47,4 @@
     <feGaussianBlur stdDeviation="2" result="blur" />
     <feComposite in="SourceGraphic" in2="blur" operator="over" />
   </filter>
-</svg>
+</svg> 

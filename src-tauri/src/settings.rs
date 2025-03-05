@@ -8,6 +8,7 @@ pub struct Settings {
     pub autostart: bool,
     pub minimize_to_tray: bool,
     pub gta_path: String,
+    pub theme: String,
 }
 
 impl Default for Settings {
@@ -16,6 +17,7 @@ impl Default for Settings {
             autostart: false,
             minimize_to_tray: true,
             gta_path: String::new(),
+            theme: String::from("dark"),
         }
     }
 }
@@ -27,6 +29,7 @@ pub fn save_settings(settings: &Settings) -> Result<(), Box<dyn std::error::Erro
     key.set_value("autostart", &(settings.autostart as u32))?;
     key.set_value("minimize_to_tray", &(settings.minimize_to_tray as u32))?;
     key.set_value("gta_path", &settings.gta_path)?;
+    key.set_value("theme", &settings.theme)?;
     
     if settings.autostart {
         set_autostart(true)?;
@@ -44,11 +47,13 @@ pub fn load_settings() -> Settings {
         let autostart: u32 = key.get_value("autostart").unwrap_or(0);
         let minimize_to_tray: u32 = key.get_value("minimize_to_tray").unwrap_or(1);
         let gta_path: String = key.get_value("gta_path").unwrap_or_default();
+        let theme: String = key.get_value("theme").unwrap_or_default();
         
         Settings {
             autostart: autostart != 0,
             minimize_to_tray: minimize_to_tray != 0,
             gta_path,
+            theme,
         }
     } else {
         Settings::default()

@@ -17,8 +17,23 @@ function App() {
   const [activeTab, setActiveTab] = useState('play')
   const [onlinePlayers] = useState(22302)
   const [loading, setLoading] = useState(true)
+  const [appVersion, setAppVersion] = useState('')
+  const [cursorPosition, setCursorPosition] = useState({ x: -100, y: -100 })
+  const [isMouseMoving, setIsMouseMoving] = useState(false)
   
   useEffect(() => {
+    const fetchVersion = async () => {
+      try {
+        const version = await invoke('get_app_version');
+        setAppVersion(version);
+      } catch (error) {
+        console.error('Ошибка при получении версии:', error);
+        setAppVersion('Неизвестно');
+      }
+    };
+    
+    fetchVersion();
+    
     const disableContextMenu = (e) => {
       e.preventDefault();
       return false;
@@ -43,6 +58,35 @@ function App() {
       document.removeEventListener('contextmenu', disableContextMenu);
       document.removeEventListener('keydown', disableDevTools);
     };
+  }, []);
+
+  useEffect(() => {
+    let timeout;
+    
+    const handleMouseMove = (e) => {
+      setCursorPosition({ x: e.clientX, y: e.clientY });
+      setIsMouseMoving(true);
+      
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        setIsMouseMoving(false);
+      }, 100);
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Загружаем настройки при старте приложения
+    invoke('load_settings').then((settings) => {
+      // Устанавливаем тему из настроек
+      document.documentElement.setAttribute('data-theme', settings.theme);
+    });
   }, []);
 
   const handleMinimize = () => {
@@ -87,6 +131,15 @@ function App() {
 
   return (
     <>
+      <div 
+        className="cursor-glow" 
+        style={{
+          left: `${cursorPosition.x}px`,
+          top: `${cursorPosition.y}px`,
+          opacity: isMouseMoving ? 0.4 : 0
+        }}
+      />
+      
       {loading ? (
         <SplashScreen onFinished={handleSplashFinished} />
       ) : (
@@ -96,7 +149,7 @@ function App() {
               className="titlebar-drag"
               onMouseDown={startDragging}
             >
-              Paradise Launcher v2.3.31
+              Paradise Launcher v{appVersion}
             </div>
             <div className="titlebar-controls">
               <button 

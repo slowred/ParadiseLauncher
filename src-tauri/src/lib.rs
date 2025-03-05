@@ -2,6 +2,11 @@ mod settings;
 mod discord;
 mod friends;
 
+// Функция для получения версии приложения
+pub fn get_app_version() -> &'static str {
+    "1.0.1"
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -25,6 +30,8 @@ pub fn run() {
             crate::commands::get_friends,
             crate::commands::add_friend,
             crate::commands::remove_friend,
+            crate::commands::get_app_version,
+            crate::commands::get_app_icon_path,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -117,5 +124,16 @@ mod commands {
     #[tauri::command]
     pub async fn remove_friend(friend_id: String) -> Result<(), String> {
         remove_existing_friend(&friend_id)
+    }
+
+    #[tauri::command]
+    pub async fn get_app_version() -> String {
+        crate::get_app_version().to_string()
+    }
+
+    #[tauri::command]
+    pub async fn get_app_icon_path() -> String {
+        // Возвращает относительный путь к иконке в сборке
+        "icon.png".to_string()
     }
 }

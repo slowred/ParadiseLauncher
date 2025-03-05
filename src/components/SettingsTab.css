@@ -659,13 +659,337 @@ input:checked + .toggle-slider:before {
 }
 
 .stat-value {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   color: var(--primary-color);
 }
 
 .stat-label {
-  font-size: 14px;
+  font-size: 8px;
   color: var(--text-secondary);
   margin-top: 5px;
+}
+
+/* Информация о разработчике */
+.developer-info {
+  margin: 20px 0;
+  padding: 20px;
+  background: linear-gradient(165deg, 
+    rgba(0, 122, 255, 0.05) 0%, 
+    rgba(10, 132, 255, 0.02) 100%
+  );
+  border-radius: 12px;
+  border: 1px solid rgba(0, 122, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.developer-info:hover {
+  box-shadow: 0 5px 15px rgba(0, 122, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.developer-header {
+  margin-bottom: 15px;
+}
+
+.developer-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.developer-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.developer-avatar {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #007AFF, #00C2FF);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+}
+
+.developer-avatar svg {
+  width: 100%;
+  height: 100%;
+  color: white;
+}
+
+.developer-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.developer-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.developer-role {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.theme-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.theme-options {
+  display: flex;
+  gap: 12px;
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.theme-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.theme-option.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.theme-preview {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-preview.dark {
+  background: #0A1C23;
+  border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+.theme-preview.light {
+  background: #ffffff;
+}
+
+/* Добавляем стили для светлой темы */
+[data-theme="light"] {
+  --bg-darker: #f5f5f5;
+  --text-color: #213547;
+  --text-secondary: #666666;
+  --primary-color: #008B9E;
+  --secondary-color: #00455e;
+  --accent-gradient: linear-gradient(135deg, #008B9E, #00455e);
+}
+
+/* Обновляем цвета для тёмной темы */
+[data-theme="dark"] {
+  --bg-darker: #0A1C23;  /* Тёмно-синий фон */
+  --bg-dark: #061418;    /* Более тёмный синий */
+  --text-color: #ffffff;
+  --text-secondary: #7A9BA8;  /* Приглушённый синий для вторичного текста */
+  --primary-color: #00E5FF;   /* Яркий голубой для акцентов */
+  --secondary-color: #008B9E; /* Приглушённый голубой */
+  --accent-gradient: linear-gradient(135deg, #00e5ff, #008B9E);
+}
+
+/* Стили для табов в тёмной теме */
+[data-theme="dark"] .tab {
+  background: rgba(0, 229, 255, 0.05);
+  border: 1px solid rgba(0, 229, 255, 0.1);
+}
+
+[data-theme="dark"] .tab:hover {
+  background: rgba(0, 229, 255, 0.08);
+  border-color: rgba(0, 229, 255, 0.2);
+}
+
+[data-theme="dark"] .tab.active {
+  background: linear-gradient(165deg, 
+    rgba(0, 229, 255, 0.15) 0%, 
+    rgba(0, 229, 255, 0.05) 100%
+  );
+  border-color: rgba(0, 229, 255, 0.3);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.1);
+}
+
+/* Стили для табов в светлой теме */
+[data-theme="light"] .tab {
+  background: rgba(0, 139, 158, 0.05);
+  border: 1px solid rgba(0, 139, 158, 0.1);
+}
+
+[data-theme="light"] .tab:hover {
+  background: rgba(0, 139, 158, 0.08);
+  border-color: rgba(0, 139, 158, 0.2);
+}
+
+[data-theme="light"] .tab.active {
+  background: linear-gradient(165deg, 
+    rgba(0, 139, 158, 0.15) 0%, 
+    rgba(0, 139, 158, 0.05) 100%
+  );
+  border-color: rgba(0, 139, 158, 0.3);
+  box-shadow: 0 0 20px rgba(0, 139, 158, 0.1);
+}
+
+/* Иконки табов */
+[data-theme="dark"] .tab-icon {
+  color: var(--primary-color);
+  opacity: 0.7;
+}
+
+[data-theme="dark"] .tab.active .tab-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.5));
+}
+
+[data-theme="light"] .tab-icon {
+  color: var(--primary-color);
+  opacity: 0.7;
+}
+
+[data-theme="light"] .tab.active .tab-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(0, 139, 158, 0.5));
+}
+
+/* Текст табов */
+[data-theme="dark"] .tab-text {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .tab.active .tab-text {
+  color: var(--text-color);
+}
+
+[data-theme="light"] .tab-text {
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .tab.active .tab-text {
+  color: var(--text-color);
+}
+
+/* Анимация при наведении */
+.tab {
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  transform: translateY(-2px);
+}
+
+.tab.active:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Обновляем стили для тоглов с учетом темы */
+[data-theme="dark"] .toggle-slider {
+  background-color: rgba(0, 229, 255, 0.1);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+[data-theme="dark"] .toggle-slider:before {
+  background-color: #00e5ff;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+
+[data-theme="dark"] input:checked + .toggle-slider {
+  background-color: rgba(0, 229, 255, 0.3);
+}
+
+[data-theme="dark"] input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+  background-color: #ffffff;
+}
+
+[data-theme="light"] .toggle-slider {
+  background-color: rgba(0, 139, 158, 0.1);
+  border: 1px solid rgba(0, 139, 158, 0.2);
+}
+
+[data-theme="light"] .toggle-slider:before {
+  background-color: #008B9E;
+  box-shadow: 0 0 10px rgba(0, 139, 158, 0.5);
+}
+
+[data-theme="light"] input:checked + .toggle-slider {
+  background-color: rgba(0, 139, 158, 0.3);
+}
+
+[data-theme="light"] input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+  background-color: #ffffff;
+}
+
+/* Стили для активных кнопок в настройках */
+[data-theme="dark"] .category-button.active {
+  background: var(--accent-gradient);
+  color: white;
+  box-shadow: 0 5px 15px rgba(0, 229, 255, 0.2);
+  border-color: rgba(0, 229, 255, 0.3);
+}
+
+[data-theme="light"] .category-button.active {
+  background: var(--accent-gradient);
+  color: white;
+  box-shadow: 0 5px 15px rgba(0, 139, 158, 0.2);
+  border-color: rgba(0, 139, 158, 0.3);
+}
+
+/* Кнопки выбора темы */
+[data-theme="dark"] .theme-option.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #061418;
+  font-weight: 600;
+}
+
+[data-theme="light"] .theme-option.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  font-weight: 600;
+}
+
+/* Кнопка сброса настроек */
+[data-theme="dark"] .reset-settings-btn {
+  background: rgba(255, 59, 48, 0.1);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  color: #ff3b30;
+}
+
+[data-theme="dark"] .reset-settings-btn:hover {
+  background: rgba(255, 59, 48, 0.2);
+  box-shadow: 0 5px 15px rgba(255, 59, 48, 0.2);
+}
+
+[data-theme="light"] .reset-settings-btn {
+  background: rgba(255, 59, 48, 0.1);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  color: #e4443a;
+}
+
+[data-theme="light"] .reset-settings-btn:hover {
+  background: rgba(255, 59, 48, 0.15);
+  box-shadow: 0 5px 15px rgba(255, 59, 48, 0.15);
 } 
