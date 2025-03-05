@@ -5,13 +5,13 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   opacity: 1;
-  transition: opacity 0.3s ease-out;
+  transition: opacity 0.4s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .dialog-overlay.closing {
@@ -19,16 +19,19 @@
 }
 
 .dialog-overlay.closing .server-dialog {
-  transform: scale(0.95);
+  transform: scale(0.92) translateY(10px);
 }
 
 .server-dialog {
   background: var(--bg-darker);
-  border-radius: 20px;
+  border-radius: 24px;
   width: 600px;
   position: relative;
-  border: 1px solid rgba(0, 194, 255, 0.1);
-  animation: dialogAppear 0.3s ease-out;
+  border: 1px solid rgba(0, 194, 255, 0.15);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 194, 255, 0.1);
+  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  animation: dialogAppear 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  overflow: hidden;
 }
 
 .close-button {
@@ -68,17 +71,34 @@
 
 .server-image {
   width: 100%;
-  height: 200px;
+  height: 240px;
   background: rgba(0, 194, 255, 0.1);
-  border-radius: 10px;
-  margin-bottom: 20px;
+  border-radius: 16px;
+  margin-bottom: 24px;
   overflow: hidden;
+  position: relative;
+}
+
+.server-image::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  pointer-events: none;
 }
 
 .server-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.7s ease;
+}
+
+.server-dialog:hover .server-image img {
+  transform: scale(1.05);
 }
 
 .server-details {
@@ -98,9 +118,17 @@
 
 .stat {
   background: rgba(0, 194, 255, 0.1);
-  padding: 15px;
-  border-radius: 10px;
+  padding: 18px;
+  border-radius: 16px;
   flex: 1;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 194, 255, 0.1);
+}
+
+.stat:hover {
+  background: rgba(0, 194, 255, 0.18);
+  transform: translateY(-3px);
+  border-color: rgba(0, 194, 255, 0.3);
 }
 
 .stat-label {
@@ -121,26 +149,59 @@
   padding: 16px;
   background: var(--accent-gradient);
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   color: white;
   font-weight: bold;
   font-size: 16px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.join-button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 50%);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.5s, transform 0.5s;
 }
 
 .join-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 194, 255, 0.2);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 194, 255, 0.3);
+}
+
+.join-button:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.join-button:active {
+  transform: translateY(0);
+  box-shadow: 0 5px 15px rgba(0, 194, 255, 0.2);
 }
 
 .server-status-indicator {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
-  background: rgba(0, 194, 255, 0.1);
-  border-radius: 20px;
+  padding: 8px 14px;
+  background: rgba(0, 194, 255, 0.15);
+  border-radius: 24px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.server-status-indicator:hover {
+  background: rgba(0, 194, 255, 0.25);
+  transform: translateY(-2px);
 }
 
 .status-dot {
@@ -149,16 +210,20 @@
   background: var(--primary-color);
   border-radius: 50%;
   position: relative;
+  box-shadow: 0 0 6px var(--primary-color);
 }
 
 .status-dot::after {
   content: '';
   position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: var(--primary-color);
   border-radius: 50%;
   animation: pulse 1.5s ease-out infinite;
+  z-index: -1;
 }
 
 .status-text {
@@ -172,8 +237,11 @@
     transform: scale(1);
     opacity: 0.8;
   }
+  50% {
+    opacity: 0.2;
+  }
   100% {
-    transform: scale(2.5);
+    transform: scale(2.8);
     opacity: 0;
   }
 }
@@ -181,10 +249,44 @@
 @keyframes dialogAppear {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.90) translateY(20px);
   }
   to {
     opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.custom-star {
+  color: var(--primary-color);
+  font-size: 18px;
+  text-shadow: 0 0 10px rgba(0, 194, 255, 0.5);
+  display: inline-block;
+  animation: starPulse 3s infinite ease-in-out;
+  position: relative;
+  top: -1px;
+}
+
+@keyframes starPulse {
+  0% {
     transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 } 

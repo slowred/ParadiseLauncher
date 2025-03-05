@@ -4,14 +4,25 @@ import { invoke } from '@tauri-apps/api'
 
 export function ServerDialog({ server, onClose }) {
   const [isClosing, setIsClosing] = useState(false)
+  const [isJoining, setIsJoining] = useState(false)
   
   const handleClose = () => {
     setIsClosing(true)
-    setTimeout(onClose, 300) // Время анимации
+    setTimeout(onClose, 400) // Увеличиваем время анимации
   }
 
   const handleJoin = async () => {
-    await invoke('join_server', { serverId: server.id })
+    setIsJoining(true)
+    try {
+      await invoke('join_server', { serverId: server.id })
+      // После успешного присоединения к серверу
+      setTimeout(() => {
+        handleClose()
+      }, 800)
+    } catch (error) {
+      setIsJoining(false)
+      // Обработка ошибки (можно добавить уведомление)
+    }
   }
 
   return (
@@ -28,7 +39,7 @@ export function ServerDialog({ server, onClose }) {
           </div>
 
           <div className="server-image">
-            <img src="https://paradise-rp.ru/images/home/intro/bg.webp" alt={server.name} />
+            <img src={server.image || "https://paradise-rp.ru/images/home/intro/bg.webp"} alt={server.name} />
           </div>
 
           <div className="server-details">
@@ -40,13 +51,21 @@ export function ServerDialog({ server, onClose }) {
             <div className="server-stats">
               <div className="stat">
                 <span className="stat-label">Игроков онлайн</span>
-                <span className="stat-value">1,234</span>
+                <span className="stat-value">{server.players || '1,234'}</span>
+              </div>
+              <div className="stat">
+                <span className="stat-label">Рейтинг</span>
+                <span className="stat-value">{server.rating || '4.8'} <span className="custom-star">★</span></span>
               </div>
             </div>
           </div>
 
-          <button className="join-button" onClick={handleJoin}>
-            ПРИСОЕДИНИТЬСЯ
+          <button 
+            className="join-button" 
+            onClick={handleJoin} 
+            disabled={isJoining}
+          >
+            {isJoining ? 'ПОДКЛЮЧЕНИЕ...' : 'ПРИСОЕДИНИТЬСЯ'}
           </button>
         </div>
       </div>
