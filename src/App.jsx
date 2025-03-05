@@ -9,10 +9,12 @@ import { NewsTab } from './components/NewsTab'
 import { Sidebar } from './components/Sidebar'
 import { appWindow } from '@tauri-apps/api/window'
 import { PlayTab } from './components/PlayTab'
+import { SplashScreen } from './components/SplashScreen'
 
 function App() {
   const [activeTab, setActiveTab] = useState('play')
   const [onlinePlayers] = useState(22302)
+  const [loading, setLoading] = useState(true)
   
   const handleMinimize = () => {
     invoke('minimize_window')
@@ -28,6 +30,10 @@ function App() {
       // Запасной вариант, если команда не сработала
       appWindow.startDragging();
     });
+  }
+
+  const handleSplashFinished = () => {
+    setLoading(false);
   }
 
   const renderContent = () => {
@@ -47,42 +53,48 @@ function App() {
   }
 
   return (
-    <div className="app-container">
-      <div className="titlebar">
-        <div 
-          className="titlebar-drag"
-          onMouseDown={startDragging}
-        >
-          Paradise Launcher v2.3.31
-        </div>
-        <div className="titlebar-controls">
-          <button 
-            className="titlebar-button minimize" 
-            onClick={handleMinimize}
-          >
-            ─
-          </button>
-          <button 
-            className="titlebar-button close" 
-            onClick={handleClose}
-          >
-            ×
-          </button>
-        </div>
-      </div>
+    <>
+      {loading ? (
+        <SplashScreen onFinished={handleSplashFinished} />
+      ) : (
+        <div className="app-container">
+          <div className="titlebar">
+            <div 
+              className="titlebar-drag"
+              onMouseDown={startDragging}
+            >
+              Paradise Launcher v2.3.31
+            </div>
+            <div className="titlebar-controls">
+              <button 
+                className="titlebar-button minimize" 
+                onClick={handleMinimize}
+              >
+                ─
+              </button>
+              <button 
+                className="titlebar-button close" 
+                onClick={handleClose}
+              >
+                ×
+              </button>
+            </div>
+          </div>
 
-      <div className="app-content">
-        <Sidebar 
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
-          onlinePlayers={onlinePlayers} 
-        />
-        
-        <main className="main-content">
-          {renderContent()}
-        </main>
-      </div>
-    </div>
+          <div className="app-content">
+            <Sidebar 
+              activeTab={activeTab} 
+              setActiveTab={setActiveTab} 
+              onlinePlayers={onlinePlayers} 
+            />
+            
+            <main className="main-content">
+              {renderContent()}
+            </main>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
