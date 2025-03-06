@@ -3,6 +3,12 @@ mod discord;
 mod friends;
 mod server_connection;
 
+// Храним глобальный статус соединения
+lazy_static::lazy_static! {
+    static ref SERVER_STATUS: std::sync::Mutex<Option<server_connection::ConnectionStatus>> = std::sync::Mutex::new(None);
+    static ref CONNECTION_CHECKED: std::sync::Mutex<bool> = std::sync::Mutex::new(false);
+}
+
 // Функция для получения версии приложения
 pub fn get_app_version() -> &'static str {
     "1.0.1"
@@ -10,6 +16,9 @@ pub fn get_app_version() -> &'static str {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // Убираем предварительную проверку сервера при старте
+    // Теперь проверка будет выполняться только при явном вызове из фронтенда
+    
     tauri::Builder::default()
         .setup(|_| {
             #[cfg(debug_assertions)]
@@ -35,6 +44,7 @@ pub fn run() {
             crate::commands::get_app_icon_path,
             // commands for working with server
             crate::commands::check_server_connection,
+            crate::commands::get_server_status,
             crate::commands::get_all_mods,
             crate::commands::get_mod_by_id,
             crate::commands::open_browser,
@@ -65,7 +75,8 @@ mod commands {
         ConnectionStatus,
         check_server_connection as check_connection,
         get_all_mods as fetch_all_mods,
-        get_mod_by_id as fetch_mod_by_id
+        get_mod_by_id as fetch_mod_by_id,
+        check_connection_only
     };
     use std::process::Command;
 
@@ -153,8 +164,55 @@ mod commands {
 
     // Новые команды для работы с модами
     #[tauri::command]
-    pub async fn check_server_connection() -> ConnectionStatus {
-        check_connection()
+    pub async fn check_server_connection() -> Result<crate::server_connection::ConnectionStatus, String> {
+        // Используем новую функцию, которая только проверяет соединение без загрузки модов
+        let status = crate::server_connection::check_connection_only();
+        
+        // Сохраняем результат в глобальных переменных
+        {
+            let mut server_status = crate::SERVER_STATUS.lock().unwrap();
+            *server_status = Some(status.clone());
+        }
+        {
+            let mut connection_checked = crate::CONNECTION_CHECKED.lock().unwrap();
+            *connection_checked = true;
+        }
+        
+        Ok(status)
+    }
+
+    #[tauri::command]
+    pub async fn get_server_status() -> Result<crate::server_connection::ConnectionStatus, String> {
+        let checked;
+        let status_option;
+        
+        {
+            checked = *crate::CONNECTION_CHECKED.lock().unwrap();
+        }
+        
+        if checked {
+            {
+                status_option = crate::SERVER_STATUS.lock().unwrap().clone();
+            }
+            
+            if let Some(status) = status_option {
+                return Ok(status);
+            }
+        }
+        
+        // Если проверка еще не выполнена или статус не установлен, проверяем заново
+        let status = crate::server_connection::check_server_connection();
+        
+        {
+            let mut server_status = crate::SERVER_STATUS.lock().unwrap();
+            *server_status = Some(status.clone());
+        }
+        {
+            let mut connection_checked = crate::CONNECTION_CHECKED.lock().unwrap();
+            *connection_checked = true;
+        }
+        
+        Ok(status)
     }
 
     #[tauri::command]
@@ -195,5 +253,12 @@ mod commands {
         }
         
         Ok(())
+    }
+
+    #[allow(dead_code)]
+    #[tauri::command]
+    pub async fn load_mods() -> Result<Vec<crate::server_connection::ModData>, String> {
+        // Загружаем моды только при явном вызове этой функции
+        crate::server_connection::get_all_mods()
     }
 }

@@ -15,10 +15,12 @@ pub struct ModData {
     pub media_links: Vec<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+// Добавляем Serialize и Deserialize для использования в Tauri командах
+#[derive(Clone, Serialize, Deserialize)]
 pub struct ConnectionStatus {
     pub connected: bool,
     pub message: String,
+    // Меняем тип на String, так как SystemTime сложно сериализовать
     pub last_check: String,
 }
 
@@ -360,6 +362,90 @@ pub fn connect_to_server() -> ConnectionStatus {
         },
         Err(e) => {
             println!("Ошибка подключения к серверу: {}", e);
+            return ConnectionStatus {
+                connected: false,
+                message: format!("Ошибка соединения: {}", e),
+                last_check: format!("{:?}", now),
+            };
+        }
+    }
+}
+
+// Новая функция для проверки соединения без загрузки модов
+pub fn check_connection_only() -> ConnectionStatus {
+    let now = Instant::now();
+    
+    // Проверка, прошло ли 1 секунда с последней попытки
+    let mut last_attempt = LAST_CONNECTION_ATTEMPT.lock().unwrap();
+    if now.duration_since(*last_attempt).as_secs() < 1 {
+        return ConnectionStatus {
+            connected: false,
+            message: "Пожалуйста, подождите 1 секунду перед повторной попыткой".to_string(),
+            last_check: format!("{:?}", now),
+        };
+    }
+    
+    // Обновление времени последней попытки
+    *last_attempt = now;
+    
+    // Проверка TCP соединения
+    match TcpStream::connect_timeout(&"127.0.0.1:6512".parse().unwrap(), Duration::from_secs(3)) {
+        Ok(mut stream) => {
+            // Отправляем простую команду для проверки, что сервер отвечает
+            println!("Отправка команды PING (только проверка соединения)");
+            if let Err(e) = stream.write_all(b"PING\n") {
+                return ConnectionStatus {
+                    connected: false,
+                    message: format!("Ошибка отправки команды: {}", e),
+                    last_check: format!("{:?}", now),
+                };
+            }
+            
+            // Установка таймаута для чтения
+            if let Err(e) = stream.set_read_timeout(Some(Duration::from_secs(3))) {
+                return ConnectionStatus {
+                    connected: false,
+                    message: format!("Ошибка установки таймаута: {}", e),
+                    last_check: format!("{:?}", now),
+                };
+            }
+            
+            // Чтение ответа
+            let mut reader = BufReader::new(stream);
+            let mut response = String::new();
+            match reader.read_line(&mut response) {
+                Ok(_) => {
+                    // Обрезаем пробелы и перевод строки
+                    let trimmed_response = response.trim();
+                    println!("Получен ответ на PING: '{}'", trimmed_response);
+                    
+                    // Проверяем, что ответ содержит "PONG"
+                    if trimmed_response == "PONG" {
+                        println!("Соединение успешно установлено");
+                        return ConnectionStatus {
+                            connected: true,
+                            message: "Соединение установлено".to_string(),
+                            last_check: format!("{:?}", now),
+                        };
+                    } else {
+                        // Другой ответ
+                        return ConnectionStatus {
+                            connected: false,
+                            message: format!("Неожиданный ответ: {}", trimmed_response),
+                            last_check: format!("{:?}", now),
+                        };
+                    }
+                },
+                Err(e) => {
+                    return ConnectionStatus {
+                        connected: false,
+                        message: format!("Ошибка чтения ответа: {}", e),
+                        last_check: format!("{:?}", now),
+                    };
+                }
+            }
+        },
+        Err(e) => {
             return ConnectionStatus {
                 connected: false,
                 message: format!("Ошибка соединения: {}", e),

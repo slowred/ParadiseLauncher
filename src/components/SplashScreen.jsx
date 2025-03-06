@@ -1,40 +1,78 @@
 import { useEffect, useState } from 'react';
+import { invoke } from '@tauri-apps/api';
 import './SplashScreen.css';
 
 export function SplashScreen({ onFinished }) {
   const [progress, setProgress] = useState(0);
   const [showingText, setShowingText] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('Загрузка интерфейса...');
+  const [connectionFailed, setConnectionFailed] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
+  
+  // Функция проверки соединения
+  const checkConnection = async () => {
+    try {
+      setStatusMessage('Проверка соединения с сервером...');
+      setIsRetrying(true);
+      
+      const result = await invoke('check_server_connection');
+      
+      if (result.connected) {
+        setStatusMessage('Соединение с сервером установлено');
+        setProgress(85);
+        setConnectionFailed(false);
+        
+        // После установки соединения через 2 секунды завершаем загрузку
+        setTimeout(() => {
+          setProgress(100);
+          setTimeout(() => {
+            onFinished();
+          }, 500);
+        }, 2000);
+        
+      } else {
+        setStatusMessage(`Сервер недоступен: ${result.message}`);
+        setProgress(70);
+        setConnectionFailed(true);
+      }
+    } catch (error) {
+      setStatusMessage('Ошибка проверки соединения');
+      setConnectionFailed(true);
+      console.error('Connection check error:', error);
+    } finally {
+      setIsRetrying(false);
+    }
+  };
+  
+  // Обработчик нажатия кнопки повтора
+  const handleRetry = () => {
+    checkConnection();
+  };
   
   useEffect(() => {
-    // Минимальное время отображения - 5 секунд
-    const minDisplayTime = 5000;
-    const startTime = Date.now();
-    
-    // Плавно увеличиваем прогресс
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        const newProgress = prev + (100 - prev) / 20;
-        return newProgress > 99 ? 100 : newProgress;
-      });
-    }, 200);
-    
     // Показываем текст через небольшую задержку
     setTimeout(() => {
       setShowingText(true);
     }, 600);
     
-    // Скрываем экран загрузки после минимального времени
+    // Плавно увеличиваем прогресс до 60%
+    const progressInterval = setInterval(() => {
+      setProgress(prev => {
+        if (prev < 60) {
+          const newProgress = prev + (60 - prev) / 10;
+          return newProgress > 59 ? 60 : newProgress;
+        }
+        return prev;
+      });
+    }, 200);
+    
+    // Выполняем проверку соединения после короткой задержки
     setTimeout(() => {
-      clearInterval(progressInterval);
-      setProgress(100);
-      
-      setTimeout(() => {
-        onFinished();
-      }, 500); // Дополнительное время для финальной анимации
-    }, Math.max(0, minDisplayTime - (Date.now() - startTime)));
+      checkConnection();
+    }, 2000);
     
     return () => clearInterval(progressInterval);
-  }, [onFinished]);
+  }, []);
   
   return (
     <div className="splash-screen">
@@ -78,8 +116,22 @@ export function SplashScreen({ onFinished }) {
         </div>
         
         <p className={`splash-text ${showingText ? 'visible' : ''}`}>
-          Загрузка интерфейса...
+          {statusMessage}
         </p>
+        
+        {/* Диалоговое окно для повторного подключения */}
+        {connectionFailed && (
+          <div className="connection-retry-dialog">
+            <p>Не удалось подключиться к серверу</p>
+            <button 
+              onClick={handleRetry} 
+              disabled={isRetrying}
+              className="retry-button"
+            >
+              {isRetrying ? 'Подключение...' : 'Повторить попытку'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
