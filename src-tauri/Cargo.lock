@@ -67,6 +67,7 @@ name = "app"
 version = "0.1.0"
 dependencies = [
  "dirs",
+ "lazy_static",
  "once_cell",
  "reqwest",
  "serde",

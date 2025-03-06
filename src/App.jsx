@@ -12,6 +12,7 @@ import { PlayTab } from './components/PlayTab'
 import { SplashScreen } from './components/SplashScreen'
 import { DiscordTab } from './components/DiscordTab'
 import { FriendsTab } from './components/FriendsTab'
+import { ModTab } from './components/ModTab'
 
 function App() {
   const [activeTab, setActiveTab] = useState('play')
@@ -20,6 +21,8 @@ function App() {
   const [appVersion, setAppVersion] = useState('')
   const [cursorPosition, setCursorPosition] = useState({ x: -100, y: -100 })
   const [isMouseMoving, setIsMouseMoving] = useState(false)
+  const [showDialogActive, setShowDialogActive] = useState(false)
+  const [selectedServer, setSelectedServer] = useState(null)
   
   useEffect(() => {
     const fetchVersion = async () => {
@@ -121,6 +124,8 @@ function App() {
         return <DiscordTab />
       case 'friends':
         return <FriendsTab />
+      case 'mods':
+        return <ModTab />
       default:
         return <div className="development-notice">
           <h2>В разработке</h2>
@@ -136,7 +141,8 @@ function App() {
         style={{
           left: `${cursorPosition.x}px`,
           top: `${cursorPosition.y}px`,
-          opacity: isMouseMoving ? 0.4 : 0
+          opacity: isMouseMoving && !showDialogActive ? 0.4 : 0,
+          display: showDialogActive ? 'none' : 'block'
         }}
       />
       

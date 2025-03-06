@@ -1,6 +1,7 @@
 mod settings;
 mod discord;
 mod friends;
+mod server_connection;
 
 // Функция для получения версии приложения
 pub fn get_app_version() -> &'static str {
@@ -32,6 +33,11 @@ pub fn run() {
             crate::commands::remove_friend,
             crate::commands::get_app_version,
             crate::commands::get_app_icon_path,
+            // commands for working with server
+            crate::commands::check_server_connection,
+            crate::commands::get_all_mods,
+            crate::commands::get_mod_by_id,
+            crate::commands::open_browser,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -54,6 +60,14 @@ mod commands {
         remove_friend as remove_existing_friend,
         AddFriendResponse
     };
+    use crate::server_connection::{
+        ModData,
+        ConnectionStatus,
+        check_server_connection as check_connection,
+        get_all_mods as fetch_all_mods,
+        get_mod_by_id as fetch_mod_by_id
+    };
+    use std::process::Command;
 
     #[tauri::command]
     pub async fn minimize_window(window: Window) {
@@ -135,5 +149,51 @@ mod commands {
     pub async fn get_app_icon_path() -> String {
         // Возвращает относительный путь к иконке в сборке
         "icon.png".to_string()
+    }
+
+    // Новые команды для работы с модами
+    #[tauri::command]
+    pub async fn check_server_connection() -> ConnectionStatus {
+        check_connection()
+    }
+
+    #[tauri::command]
+    pub async fn get_all_mods() -> Result<Vec<ModData>, String> {
+        fetch_all_mods()
+    }
+
+    #[tauri::command]
+    pub async fn get_mod_by_id(mod_id: i32) -> Result<ModData, String> {
+        fetch_mod_by_id(mod_id)
+    }
+
+    // Добавляем команду для открытия ссылок в браузере
+    #[tauri::command]
+    pub async fn open_browser(url: String) -> Result<(), String> {
+        #[cfg(target_os = "windows")]
+        {
+            Command::new("cmd")
+                .args(&["/c", "start", &url])
+                .spawn()
+                .map_err(|e| format!("Не удалось открыть браузер: {}", e))?;
+        }
+        
+        #[cfg(target_os = "macos")]
+        {
+            Command::new("open")
+                .arg(&url)
+                .spawn()
+                .map_err(|e| format!("Не удалось открыть браузер: {}", e))?;
+        }
+        
+        #[cfg(target_os = "linux")]
+        {
+            Command::new("xdg-open")
+                .arg(&url)
+                .spawn()
+                .map_err(|e| format!("Не удалось открыть браузер: {}", e))?;
+        }
+        
+        Ok(())
     }
 }
