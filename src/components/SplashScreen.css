@@ -154,39 +154,103 @@
 }
 
 .connection-retry-dialog {
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 20, 25, 0.85);
+  backdrop-filter: blur(5px);
   border-radius: 8px;
-  padding: 20px;
-  margin-top: 20px;
+  padding: 20px 25px;
+  margin-top: 25px;
   text-align: center;
-  animation: fadeIn 0.3s ease-out;
-  box-shadow: 0 0 20px rgba(18, 240, 255, 0.3);
-  border: 1px solid rgba(18, 240, 255, 0.5);
+  width: 320px;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.2), 
+              inset 0 0 10px rgba(0, 229, 255, 0.05);
+  animation: dialogAppear 0.4s forwards ease-out;
+}
+
+.connection-retry-dialog .error-icon {
+  display: block;
+  margin: 0 auto 15px;
+  color: #ff5757;
+  font-size: 28px;
+  animation: pulseError 2s infinite ease-in-out;
+  filter: drop-shadow(0 0 5px rgba(255, 87, 87, 0.7));
 }
 
 .connection-retry-dialog p {
-  margin-bottom: 15px;
-  color: #fff;
+  margin-bottom: 20px;
+  color: #e0e0e0;
+  font-size: 15px;
+  font-weight: 400;
 }
 
 .retry-button {
-  background-color: var(--primary-color);
-  color: #000;
-  border: none;
+  background-color: rgba(0, 229, 255, 0.2);
+  color: #00e5ff;
+  border: 1px solid rgba(0, 229, 255, 0.5);
   border-radius: 4px;
-  padding: 8px 16px;
-  font-weight: bold;
+  padding: 8px 20px;
+  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 160px;
 }
 
 .retry-button:hover {
-  background-color: var(--primary-color-hover);
-  transform: scale(1.05);
+  background-color: rgba(0, 229, 255, 0.3);
+  border-color: rgba(0, 229, 255, 0.7);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+}
+
+.retry-button:active {
+  transform: scale(0.98);
 }
 
 .retry-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
+}
+
+.retry-button .spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0, 229, 255, 0.3);
+  border-top-color: #00e5ff;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes dialogAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseError {
+  0% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 } 

@@ -122,13 +122,19 @@ export function SplashScreen({ onFinished }) {
         {/* Диалоговое окно для повторного подключения */}
         {connectionFailed && (
           <div className="connection-retry-dialog">
+            <span className="error-icon">⚠</span>
             <p>Не удалось подключиться к серверу</p>
             <button 
               onClick={handleRetry} 
               disabled={isRetrying}
               className="retry-button"
             >
-              {isRetrying ? 'Подключение...' : 'Повторить попытку'}
+              {isRetrying ? (
+                <>
+                  <span className="spinner"></span>
+                  Подключение...
+                </>
+              ) : 'Повторить попытку'}
             </button>
           </div>
         )}
