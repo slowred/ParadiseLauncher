@@ -27,7 +27,8 @@ export function ModTab() {
     activeRequestRef.current = requestId;
     lastRequestTimeRef.current = requestId;
     
-    checkServerConnection(requestId);
+    // Проверяем статус соединения и получаем моды
+    checkServerStatus(requestId);
 
     // Обработчик видимости вкладки
     const handleVisibilityChange = () => {
@@ -46,7 +47,7 @@ export function ModTab() {
         activeRequestRef.current = newRequestId;
         lastRequestTimeRef.current = newRequestId;
         
-        checkServerConnection(newRequestId);
+        checkServerStatus(newRequestId);
       } else {
         setIsVisible(false);
       }
@@ -68,7 +69,7 @@ export function ModTab() {
     setCurrentImageIndex(0);
   }, [selectedMod]);
 
-  const checkServerConnection = async (requestId) => {
+  const checkServerStatus = async (requestId) => {
     // Если это не самый последний запрос, прерываем выполнение
     if (activeRequestRef.current !== requestId) return;
     
@@ -77,7 +78,8 @@ export function ModTab() {
     setLoading(true);
     
     try {
-      const status = await invoke('check_server_connection');
+      // Получаем текущий статус соединения (без повторной проверки)
+      const status = await invoke('get_server_status');
       
       // Проверяем, что запрос все еще актуален
       if (activeRequestRef.current !== requestId) return;
@@ -85,6 +87,7 @@ export function ModTab() {
       setConnectionStatus(status);
       
       if (status.connected) {
+        // Если соединение установлено, получаем моды
         fetchMods(requestId);
       } else {
         setLoading(false);
@@ -175,7 +178,7 @@ export function ModTab() {
     const newRequestId = now;
     activeRequestRef.current = newRequestId;
     lastRequestTimeRef.current = newRequestId;
-    checkServerConnection(newRequestId);
+    checkServerStatus(newRequestId);
   };
 
   return (

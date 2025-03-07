@@ -3,10 +3,11 @@ mod discord;
 mod friends;
 mod server_connection;
 
-// Храним глобальный статус соединения
+// Храним глобальный статус соединения и кэш модов
 lazy_static::lazy_static! {
     static ref SERVER_STATUS: std::sync::Mutex<Option<server_connection::ConnectionStatus>> = std::sync::Mutex::new(None);
     static ref CONNECTION_CHECKED: std::sync::Mutex<bool> = std::sync::Mutex::new(false);
+    static ref MODS_CACHE: std::sync::Mutex<Option<Vec<server_connection::ModData>>> = std::sync::Mutex::new(None);
 }
 
 // Функция для получения версии приложения
@@ -48,6 +49,7 @@ pub fn run() {
             crate::commands::get_all_mods,
             crate::commands::get_mod_by_id,
             crate::commands::open_browser,
+            crate::commands::load_mods,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
@@ -217,6 +219,15 @@ mod commands {
 
     #[tauri::command]
     pub async fn get_all_mods() -> Result<Vec<ModData>, String> {
+        // Сначала проверяем кэш
+        {
+            let mods_cache = crate::MODS_CACHE.lock().unwrap();
+            if let Some(mods) = &*mods_cache {
+                return Ok(mods.clone());
+            }
+        }
+        
+        // Если кэш пуст, загружаем моды с сервера
         fetch_all_mods()
     }
 
@@ -255,10 +266,17 @@ mod commands {
         Ok(())
     }
 
-    #[allow(dead_code)]
     #[tauri::command]
     pub async fn load_mods() -> Result<Vec<crate::server_connection::ModData>, String> {
-        // Загружаем моды только при явном вызове этой функции
-        crate::server_connection::get_all_mods()
+        // Загружаем моды и сохраняем их в глобальной переменной
+        let mods = crate::server_connection::get_all_mods()?;
+        
+        // Сохраняем моды в глобальной переменной для быстрого доступа
+        {
+            let mut mods_cache = crate::MODS_CACHE.lock().unwrap();
+            *mods_cache = Some(mods.clone());
+        }
+        
+        Ok(mods)
     }
 }

@@ -19,8 +19,21 @@ export function SplashScreen({ onFinished }) {
       
       if (result.connected) {
         setStatusMessage('Соединение с сервером установлено');
-        setProgress(85);
+        setProgress(75);
         setConnectionFailed(false);
+        
+        // Загружаем моды сразу после успешного соединения
+        setStatusMessage('Загрузка данных с сервера...');
+        try {
+          // Загружаем моды в фоновом режиме
+          await invoke('load_mods');
+          setProgress(90);
+          setStatusMessage('Данные успешно загружены');
+        } catch (error) {
+          console.error('Ошибка загрузки модов:', error);
+          // Продолжаем работу даже при ошибке загрузки модов
+          setStatusMessage('Соединение установлено, но возникли проблемы с загрузкой данных');
+        }
         
         // После установки соединения через 2 секунды завершаем загрузку
         setTimeout(() => {
